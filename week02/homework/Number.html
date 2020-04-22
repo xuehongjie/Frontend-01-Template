@@ -1,0 +1,10 @@
+<script>
+  // 写一个正则，匹配所有Number直接量
+  let reg = /^-?\d+$|^(-?\d+)(\.\d+)?$|^0[bB][01]+$|^0[oO][0-7]+$|^0[xX][0-9a-fA-F]+$/;
+
+  console.log('十进制整数', reg.test('11'));
+  console.log('十进制浮点数', reg.test('0.12'));
+  console.log('二进制', reg.test('0b10'));
+  console.log('八进制', reg.test('0o11'));
+  console.log('十六进制', reg.test('0xF1'));
+</script>

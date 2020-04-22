@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>utf8转换</title>
+    <style>
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 600px;
+        margin: 100px auto;
+      }
+
+      .label {
+        padding: 10px 0;
+        line-height: 20px;
+      }
+
+      .textarea {
+        width: 200px;
+        height: 80px;
+      }
+
+      .split {
+        margin: 40px 50px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="textarea-wrapper">
+        <div class="label">decode</div>
+        <textarea id="decode" class="textarea"></textarea>
+      </div>
+      <button class="split">=></button>
+      <div class="textarea-wrapper">
+        <div class="label">encode</div>
+        <textarea id="encode" class="textarea"></textarea>
+      </div>
+    </div>
+
+    <script>
+      // 写一个 UTF-8 Encoding 的函数
+      function utf8_encoding(str) {
+        str = str || '';
+        let strArr = str.split('');
+        // 十六进制数组
+        let hexArr = strArr.map((s) => {
+          let hex = s.charCodeAt().toString(16); // 转为16进制
+
+          // 转成大写
+          return `\\x${hex.toUpperCase()}`;
+        });
+
+        return hexArr.join('');
+      }
+
+      window.onload = function () {
+        let $decode = document.querySelector('#decode');
+        let $encode = document.querySelector('#encode');
+
+        function parse() {
+          let decode = $decode.value;
+
+          $encode.value = utf8_encoding(decode);
+        }
+
+        document.querySelector('.split').addEventListener('click', parse);
+      };
+    </script>
+  </body>
+</html>
