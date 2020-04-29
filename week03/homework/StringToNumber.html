@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * 字符串转数字类型
+       * @params str
+       * @params radix 转换的进制
+       */
+      function convertStringToNumber(str, radix = 10) {
+        if (radix > 10) {
+          return;
+        }
+        let flag = /e|E/.test(str);
+        if (!flag) {
+          let chars = str.split('');
+          let number = 0;
+          let i = 0;
+          while (i < chars.length && chars[i] !== '.') {
+            number = number * radix;
+            number += chars[i].codePointAt(0) - '0'.codePointAt(0);
+            i++;
+          }
+          if (chars[i] === '.') {
+            i++;
+          }
+          let decimal = 1;
+          while (i < chars.length) {
+            decimal /= radix;
+            number += (chars[i].codePointAt(0) - '0'.codePointAt(0)) * decimal;
+            i++;
+          }
+          return number;
+        } else {
+          let logNumber = Number(str.match(/\d+$/)[0]);
+          let number = str.match(/^[\d\.]+/)[0].replace(/\./, '');
+          if (/e-|E-/.test(str)) {
+            return Number(number.padEnd(logNumber + 1, 0));
+          } else {
+            return Number(
+              number.padStart(logNumber + number.length, 0).replace(/^0/, '0.')
+            );
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

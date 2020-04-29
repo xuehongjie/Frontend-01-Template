@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * 返回一个字符串
+       * @params number 要转换的数字
+       * @params radix 转换的进制
+       */
+      function convertNumberToString(number, radix = 10) {
+        let integer = Math.floor(number);
+        let decimal = String(number).match(/\.\d+$/);
+        let prefixMap = {
+          2: '0b',
+          8: '0o',
+          16: '0x',
+        };
+        let prefix = prefixMap[radix] || ''; // 获取进制前缀
+
+        // 有小数
+        if (decimal) {
+          decimal = decimal[0].replace('.', '');
+        }
+        let res = '';
+        while (integer > 0) {
+          res = String(integer % radix) + res;
+          integer = Math.floor(integer / radix);
+        }
+        return `${prefix}${decimal ? `${res}.${decimal}` : res}`;
+      }
+
+      console.log(convertNumberToString(100));
+    </script>
+  </body>
+</html>
