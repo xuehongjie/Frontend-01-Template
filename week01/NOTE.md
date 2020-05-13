@@ -39,6 +39,29 @@
   - 展现分析过程
   - 缩小规模
 
+## 构建知识体系
+
+### ECMA
+
+[所有实体](https://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent)
+
+### 标签
+
+```
+let tmp = $0.querySelectorAll('code');
+[...new Set([...tmp].map(item => item.innerText))].join('\n'); // 列出所有标签
+```
+
+### W3C 标准的状态
+
+- Candidate Recommendation：候选
+- Group Note
+- Proposed Edited Recommendation
+- Proposed Recommendation：第二个状态，建议推荐
+- Recommendation：REC，正式的标准
+- Retired：已退休的标准
+- Working Draft：WD，最初的状态，草稿
+
 ## 优秀的工程师
 
 - 领域知识，掌握的知识要串联起来
@@ -76,3 +99,59 @@
   - 工具
   - 系统
 - 结果，线上监控
+
+## 数据驱动的思考方式
+
+- 目标：分析业务目标，定数据指标
+- 现状：采集数据，建立数据展示系统
+- 方案：设计技术方案，预估数据
+- 实施：小规模实验，推广全公司落地，形成制度
+- 结果：统计最终效果汇报
+
+> 用户活跃度 = 日活 / 月活
+
+## 前端技能模型
+
+- 领域知识
+- 前端知识
+- 编程能力
+- 架构能力
+- 工程能力
+
+### 工具链
+
+#### 工具链的作用
+
+将多个工具关联起来
+
+#### 工具的分类
+
+- 脚手架，init
+- 本地调试，run
+- 单元测试，test
+- 发布，publish
+
+#### 工具链体系的设计
+
+### 持续集成
+
+- Check-in build
+- Lint + Rule Check
+
+> CICD：持续集成 (Continuous Integration) 和持续部署 (Continuous Deployment) 简称
+
+### 技术架构
+
+解决大量页面需求带来的重复劳动问题
+
+#### 复用
+
+- 库：有复用价值的代码
+  - URL
+  - AJAX
+  - ENV
+- 组件：UI 上多次出现的元素
+  - 轮播
+  - Tab
+- 模块：经常被使用的业务区块
+  - 登录

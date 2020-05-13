@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    I learned Java Script&nbsp;today. I learned
+
+    <script>
+      for (let i = 0; i < 128; i++) {
+        document.write(
+          `
+          <span style="background-color: lightgreen">${String.fromCharCode(i)}</span>
+          `
+        );
+      }
+
+      let \u5389\u5bb3 = 1; // 变量名就是厉害2个字
+
+      console.log(厉害); // 1
+      console.log('\t'.codePointAt(0)); // 9, \u0009
+    </script>
+  </body>
+</html>

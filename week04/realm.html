@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      var set = new Set();
+      var objects = [
+        eval,
+        isFinite,
+        isNaN,
+        parseFloat,
+        parseInt,
+        decodeURI,
+        decodeURIComponent,
+        encodeURI,
+        encodeURIComponent,
+        Array,
+        Date,
+        RegExp,
+        Promise,
+        Proxy,
+        Map,
+        WeakMap,
+        Set,
+        WeakSet,
+        Function,
+        Boolean,
+        String,
+        Number,
+        Symbol,
+        Object,
+        Error,
+        EvalError,
+        RangeError,
+        ReferenceError,
+        SyntaxError,
+        TypeError,
+        URIError,
+        ArrayBuffer,
+        SharedArrayBuffer,
+        DataView,
+        Float32Array,
+        Float64Array,
+        Int8Array,
+        Int16Array,
+        Int32Array,
+        Uint8Array,
+        Uint16Array,
+        Uint32Array,
+        Uint8ClampedArray,
+        Atomics,
+        JSON,
+        Math,
+        Reflect,
+      ];
+      for (var i = 0; i < objects.length; i++) {
+        var o = objects[i];
+        for (var p of Object.getOwnPropertyNames(o)) {
+          var desc = Object.getOwnPropertyDescriptor(o, p);
+          if (
+            (desc.value !== null && typeof desc.value === 'object') ||
+            typeof desc.value === 'function'
+          ) {
+            if (!set.has(desc.value)) {
+              set.add(desc.value), objects.push(desc.value);
+            }
+          }
+
+          if (desc.get) {
+            if (!set.has(desc.get)) {
+              set.add(desc.get), objects.push(desc.get);
+            }
+          }
+          if (desc.set) {
+            if (!set.has(desc.set)) {
+              set.add(desc.set), objects.push(desc.set);
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
