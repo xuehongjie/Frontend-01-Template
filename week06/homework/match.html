@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 匹配 abababx
+      function match(str) {
+        let state = start;
+        for (let c of str) {
+          state = state(c);
+          // console.log(state);
+        }
+        return state === end;
+      }
+
+      function start(c) {
+        return c === 'a' ? isFoundA : start;
+      }
+
+      function isFoundA(c) {
+        return c === 'b' ? isFoundB : start(c);
+      }
+
+      function isFoundB(c) {
+        return c === 'a' ? isFoundA2 : start(c);
+      }
+
+      function isFoundA2(c) {
+        return c === 'b' ? isFoundB2 : start(c);
+      }
+
+      function isFoundB2(c) {
+        return c === 'a' ? isFoundA3 : isFoundB(c);
+      }
+
+      function isFoundA3(c) {
+        return c === 'b' ? isFoundB3 : isFoundB(c);
+      }
+
+      function isFoundB3(c) {
+        return c === 'x' ? end : isFoundB2(c);
+      }
+
+      function end(c) {
+        return end;
+      }
+
+      let strArr = ['abab', 'abababx ab', 'abab abababxab', 'abababababababx'];
+      for (let str of strArr) {
+        console.log(str, match(str));
+      }
+    </script>
+  </body>
+</html>
