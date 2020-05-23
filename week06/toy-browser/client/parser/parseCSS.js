@@ -63,8 +63,9 @@ function compare(sp1, sp2) {
   return sp1[3] - sp2[3];
 }
 
-function computeCSS(element) {
-  var elements = stack.slice.reverse();
+function computeCSS(element, stack) {
+  var elements = stack.slice().reverse();
+  let matched = false;
   if (!element.computedStyle) {
     element.computedStyle = {};
   }
@@ -100,6 +101,7 @@ function computeCSS(element) {
         } else if (
           compare(computedStyle[declaration.property].specificity, sp) < 0
         ) {
+          computedStyle[declaration.property].value = declaration.value;
           computedStyle[declaration.property].specificity = sp;
         }
       }

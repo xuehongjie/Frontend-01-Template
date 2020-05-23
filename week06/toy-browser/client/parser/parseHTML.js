@@ -1,15 +1,10 @@
 const parseCSS = require('./parseCSS');
+const EOF = Symbol('EOF'); // EOF：End of File
 
 let currentToken = null;
 let currentAttribute = null;
-
-let stack = [
-  {
-    type: 'document',
-    children: [],
-  },
-];
 let currentTextNode = null;
+let stack = [{ type: 'document', children: [] }];
 
 // TODO 匹配空白符
 function matchSpace(c) {
@@ -37,38 +32,37 @@ function emit(token) {
       }
     }
 
-    // parseCSS.computeCSS(element);
+    parseCSS.computeCSS(element, stack);
 
     top.children.push(element);
+    // element.parent = top;
 
     // 不是自闭合标签
     if (!token.isSelfClosing) {
       stack.push(element);
-      currentTextNode = null;
-    } else if (token.type === 'endTag') {
-      if (top.tagName !== token.tagName) {
-        throw new Error("Tag start end doesn't match");
-      } else {
-        if (top.tagName === 'style') {
-          // parseCSS.addCSSRules(top.children[0].content);
-        }
-        stack.pop();
-      }
-      currentTextNode = null;
-    } else if (token.type === 'text') {
-      if (currentTextNode == null) {
-        currentTextNode = {
-          type: 'text',
-          content: '',
-        };
-        top.children.push(currentTextNode);
-      }
-      currentTextNode.content += token.content;
     }
+    currentTextNode = null;
+  } else if (token.type === 'endTag') {
+    if (top.tagName !== token.tagName) {
+      throw new Error("Tag start end doesn't match");
+    } else {
+      if (top.tagName === 'style') {
+        parseCSS.addCSSRules(top.children[0].content);
+      }
+      stack.pop();
+    }
+    currentTextNode = null;
+  } else if (token.type === 'text') {
+    if (currentTextNode == null) {
+      currentTextNode = {
+        type: 'text',
+        content: '',
+      };
+      top.children.push(currentTextNode);
+    }
+    currentTextNode.content += token.content;
   }
 }
-
-const EOF = Symbol('EOF'); // EOF：End of File
 
 function data(c) {
   if (c == '<') {
@@ -119,6 +113,7 @@ function tagName(c) {
     emit(currentToken);
     return data;
   } else {
+    currentToken.tagName += c.toLowerCase();
     return tagName;
   }
 }
@@ -126,7 +121,7 @@ function beforeAttributeName(c) {
   if (matchSpace(c)) {
     return beforeAttributeName;
   } else if (c === '/' || c === '>') {
-    return afterAttributeName;
+    return afterAttributeName(c);
   } else if (c === '=') {
   } else {
     currentAttribute = {
@@ -134,16 +129,18 @@ function beforeAttributeName(c) {
       value: '',
     };
   }
-  return attributeName;
+  return attributeName(c);
 }
 
 function attributeName(c) {
   if (matchSpace(c) || c === '/' || c === '>' || c === EOF) {
-    return afterAttributeName;
+    return afterAttributeName(c);
   } else if (c === '=') {
     return beforeAttributeValue;
   } else if (c === '\u0000') {
   } else if (c === '"' || c === "'" || c === '<') {
+    return attributeName;
+  } else {
     currentAttribute.name += c;
     return attributeName;
   }
@@ -218,7 +215,7 @@ function UnquotedAttributeValue(c) {
   } else if (c === '"' || c === "'" || c === '<' || c === '=' || c === '`') {
   } else if (c === EOF) {
   } else {
-    attributeName.value += c;
+    currentAttribute.value += c;
     return UnquotedAttributeValue;
   }
 }
@@ -271,8 +268,10 @@ function afterAttributeName(c) {
 module.exports = function (html) {
   let state = data;
   for (let c of html) {
+    // console.log(state && state.name)
     state = state(c);
   }
   state = state(EOF);
+
   return stack[0];
 };
