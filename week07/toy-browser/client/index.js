@@ -1,5 +1,7 @@
 const Request = require('./Request');
 const parser = require('./parser');
+const render = require('./render');
+const images = require('images');
 
 // HTTP/1.1 200 OK
 // Content-Type: text/plain
@@ -29,8 +31,12 @@ void (async function () {
   // console.log(request.toString());
   let response = await request.send();
   let dom = parser.parseHTML(response.body);
-  console.log('--------------dom-----------------');
-  console.log(dom);
+  console.log('--------------dom-----------------')
+  console.log(JSON.stringify(dom))
+
+  let viewport = images(800, 600);
+  render(viewport, dom);
+  viewport.save('viewport.png');
 
   // let response = await request.send();
 
