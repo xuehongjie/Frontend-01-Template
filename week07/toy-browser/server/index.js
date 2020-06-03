@@ -13,20 +13,31 @@ const server = http.createServer((req, res) => {
 `<html maaa=a >
 <head>
 <style>
-body div #myid{
-    width:100px;
-    background-color: #ff5000;
+.container {
+  display: flex;
 }
-body div img{
-    width:30px;
-    background-color: #ff1111;
+.one {
+  width: 30px;
+  height: 30px;
+  background-color: red;
+}
+.two {
+  width: 30px;
+  height: 30px;
+  background-color: green;
+}
+.third {
+  width: 30px;
+  height: 30px;
+  background-color: blue;
 }
 </style>
 </head>
 <body>
-  <div>
-    <img id="myid"/>
-    <img />
+  <div class="container">
+    <div class="one"></div>
+    <div class="two"></div>
+    <div class="third"></div>
   </div>
 </body>
 </html>`)
