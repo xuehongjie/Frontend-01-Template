@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="a">
+      123<span style="background-color: pink;">456789</span>0123456789
+    </div>
+
+    <script>
+      let range = new Range();
+      let el = document.getElementById('a');
+
+      range.setStart(el.childNodes[1], 3);
+      range.setEnd(el.childNodes[1]);
+
+      // range.extractContents()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="a">
+      <span>1</span>
+      <span>2</span>
+      <span>3</span>
+      <span>4</span>
+      <span>5</span>
+    </div>
+    <script>
+      let el = document.getElementById('a');
+
+      function reverse(element) {
+        let children = element.childNodes;
+
+        for (let i = children.length - 1; i >= 0; i--) {
+          element.append(children[i]);
+        }
+        console.log(children);
+      }
+
+      reverse(el);
+    </script>
+  </body>
+</html>

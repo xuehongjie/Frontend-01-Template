@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="a">
+      <span>1</span>
+      <span>2</span>
+      <span>3</span>
+      <span>4</span>
+      <span>5</span>
+    </div>
+    <script>
+      let el = document.getElementById('a');
+
+      function reverse(element) {
+        let range = new Range();
+        range.selectNodeContents(element);
+
+        let fragment = range.extractContents();
+        let l = fragment.childNodes.length;
+        console.log(l)
+        while (l-- > 0) {
+          console.log(l)
+          fragment.appendChild(fragment.childNodes[l]);
+        }
+        element.appendChild(fragment);
+      }
+
+      reverse(el);
+    </script>
+  </body>
+</html>

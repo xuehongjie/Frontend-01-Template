@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      a::before {
+        content: 'Hello';
+        color: red;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      title="link"
+      href="data:text/css,p%7Bcolor:blue%7D"
+    />
+  </head>
+  <body>
+    <a>world</a>
+    <script>
+      document.styleSheets[0].cssRules[0].style.fontSize = '40px';
+
+      // 切样式表的内容
+      function sliceStyle() {
+        var range = new Range();
+        range.selectNodeContents(document.getElementsByTagName('style')[0]);
+        range.extractContents();
+      }
+    </script>
+  </body>
+</html>
