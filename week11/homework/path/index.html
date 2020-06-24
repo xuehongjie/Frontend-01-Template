@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .cell {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background-color: gray;
+        border-bottom: solid 1px white;
+        border-right: solid 1px white;
+        vertical-align: middle;
+      }
+      .black {
+        background-color: black;
+      }
+      #container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 701px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <button id="save">保存画布</button>
+    <button id="clear">清空画布</button>
+    <button id="reset">重置路径</button>
+    <button id="start">开始寻路</button>
+    <!-- <script src="./path.js"></script> -->
+    <!-- <script src="./path2.js"></script> -->
+    <script src="./path3.js"></script>
+  </body>
+</html>

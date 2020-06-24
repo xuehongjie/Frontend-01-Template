@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .light-item {
+        display: inline-block;
+        margin: 30px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: grey;
+      }
+      .green.light {
+        background-color: green;
+      }
+      .yellow.light {
+        background-color: yellow;
+      }
+      .red.light {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="line">
+      <div class="light-item green"></div>
+      <div class="light-item yellow"></div>
+      <div class="light-item red"></div>
+    </div>
+
+    <script>
+      function green() {
+        let lights = document.getElementsByClassName('light-item');
+        for (let i = 0; i < lights.length; i++) {
+          lights[i].classList.remove('light');
+        }
+        document.getElementsByClassName('green')[0].classList.add('light');
+      }
+      function yellow() {
+        let lights = document.getElementsByClassName('light-item');
+        for (let i = 0; i < lights.length; i++) {
+          lights[i].classList.remove('light');
+        }
+        document.getElementsByClassName('yellow')[0].classList.add('light');
+      }
+      function red() {
+        let lights = document.getElementsByClassName('light-item');
+        for (let i = 0; i < lights.length; i++) {
+          lights[i].classList.remove('light');
+        }
+        document.getElementsByClassName('red')[0].classList.add('light');
+      }
+
+      function run() {
+        green();
+        setTimeout(() => {
+          yellow();
+          setTimeout(() => {
+            red();
+            setTimeout(() => {
+              run();
+            }, 2000);
+          }, 2000);
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>
