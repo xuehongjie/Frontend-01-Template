@@ -1,0 +1,37 @@
+<style>
+  .el {
+    transform: translate(0, 0);
+    width: 100px;
+    height: 100px;
+    background: lightgreen;
+  }
+</style>
+<body>
+  <div id="el" class="el"></div>
+</body>
+<script src="./gusture.js"></script>
+<script>
+  document.addEventListener('contextmenu', (event) => event.preventDefault());
+  document.addEventListener('selectStart', (event) => event.preventDefault(), { passive: false });
+  document.addEventListener('touchmove', (event) => event.preventDefault(), { passive: false });
+
+  let my = document.getElementById('el');
+  enableGesture(my);
+
+  let x = 0;
+  let y = 0;
+
+  my.addEventListener('pan', (event) => {
+    let { detail } = event;
+    let { startX, startY, clientX, clientY } = detail || {};
+    console.log(clientX);
+    console.log(startX);
+    my.style.transform = `translate(${x + clientX - startX}px, ${y + clientY - startY})`;
+  });
+  my.addEventListener('panend', (event) => {
+    let { detail } = event;
+    let { startX, startY, clientX, clientY } = detail || {};
+    x = x + clientX - startX;
+    y = y + clientY - startY;
+  });
+</script>
