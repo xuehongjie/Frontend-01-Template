@@ -76,10 +76,8 @@ function enableGesture(element) {
       context.isTap = false;
       context.isPan = false;
       context.isPress = true;
-      console.log('press start');
       element.dispatchEvent(new CustomEvent('pressstart', {}));
     }, 500);
-    console.log('start', point, point.clientY);
   };
 
   let move = (point, context) => {
@@ -87,13 +85,15 @@ function enableGesture(element) {
     let dy = point.clientY - context.startY;
 
     if (dx ** 2 + dy ** 2 > 100 && !context.isPan) {
+      if (context.isPress) {
+        element.dispatchEvent(new CustomEvent('presscancel', {}));
+      }
       context.isTap = false;
       context.isPan = true;
       context.isPress = false;
     }
 
     if (context.isPan) {
-      console.log('pan');
       context.moves.push({
         dx,
         dy,
@@ -103,8 +103,8 @@ function enableGesture(element) {
       element.dispatchEvent(
         new CustomEvent('pan', {
           detail: {
-            startX: point.clientX,
-            startY: point.clientY,
+            startX: context.startX,
+            startY: context.startY,
             clientX: point.clientX,
             clientY: point.clientY,
           },
@@ -130,33 +130,37 @@ function enableGesture(element) {
         // console.log('flick');
         element.dispatchEvent(
           new CustomEvent('flick', {
-            startX: point.clientX,
-            startY: point.clientY,
-            clientX: point.clientX,
-            clientY: point.clientY,
-            speed,
+            detail: {
+              startX: context.startX,
+              startY: context.startY,
+              clientX: point.clientX,
+              clientY: point.clientY,
+              speed,
+            },
           })
         );
       }
       // console.log('pan end');
       element.dispatchEvent(
         new CustomEvent('panend', {
-          startX: point.clientX,
-          startY: point.clientY,
-          clientX: point.clientX,
-          clientY: point.clientY,
-          speed,
-          isFlick,
+          detail: {
+            startX: context.startX,
+            startY: context.startY,
+            clientX: point.clientX,
+            clientY: point.clientY,
+            speed,
+            isFlick,
+          },
         })
       );
       // console.log(speed);
     }
     if (context.isTap) {
-      console.log('tap');
+      // console.log('tap');
       element.dispatchEvent(new CustomEvent('tap', {}));
     }
     if (context.isPress) {
-      console.log('press end');
+      // console.log('press end');
       element.dispatchEvent(new CustomEvent('preddend', {}));
     }
 
@@ -164,7 +168,7 @@ function enableGesture(element) {
   };
 
   let cancel = (event, context) => {
-    console.log('canceled');
+    // console.log('canceled');
     element.dispatchEvent(new CustomEvent('canceled', {}));
     clearTimeout(context.timeoutHandler);
   };

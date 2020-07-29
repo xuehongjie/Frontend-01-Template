@@ -9,7 +9,7 @@
 <body>
   <div id="el" class="el"></div>
 </body>
-<script src="./gusture.js"></script>
+<script src="./gesture.js"></script>
 <script>
   document.addEventListener('contextmenu', (event) => event.preventDefault());
   document.addEventListener('selectStart', (event) => event.preventDefault(), { passive: false });
@@ -24,9 +24,7 @@
   my.addEventListener('pan', (event) => {
     let { detail } = event;
     let { startX, startY, clientX, clientY } = detail || {};
-    console.log(clientX);
-    console.log(startX);
-    my.style.transform = `translate(${x + clientX - startX}px, ${y + clientY - startY})`;
+    my.style.transform = `translate(${x + clientX - startX}px, ${y + clientY - startY}px)`;
   });
   my.addEventListener('panend', (event) => {
     let { detail } = event;
