@@ -91,6 +91,17 @@ function enableGesture(element) {
       context.isTap = false;
       context.isPan = true;
       context.isPress = false;
+
+      element.dispatchEvent(
+        new CustomEvent('panstart', {
+          detail: {
+            startX: context.startX,
+            startY: context.startY,
+            clientX: point.clientX,
+            clientY: point.clientY,
+          },
+        })
+      );
     }
 
     if (context.isPan) {

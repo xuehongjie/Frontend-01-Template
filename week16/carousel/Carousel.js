@@ -2,31 +2,15 @@ import { Timeline, Animation } from './animation';
 import { linear, ease } from './cubicBezier';
 import { createElement, Text, Wrapper } from './createElement';
 
-export default class Carousel {
+export class Carousel {
   constructor() {
-    this.position = 0;
-    this.timeline = new Timeline();
-    this.nextPicStopHandler = null;
-    this.changePositionHandler = null;
-
-    this.effect = linear;
-    this.autoPlaySpeed = 4000;
-    this.autoplay = true;
     this.children = [];
-    this.animationPlaying = false;
-
-    this.className = '';
-    this.width = 500;
+    this.attributes = new Map();
+    this.properties = new Map();
   }
 
   setAttribute(name, value) {
-    if (name === 'effect') {
-      if (value === 'linear') this.effect = linear;
-      else if (value === 'ease') this.effect = ease;
-      else if (value === 'fade') this.effect = 'fade';
-    } else {
-      this[name] = value;
-    }
+    this[name] = value;
   }
 
   appendChild(child) {
@@ -34,274 +18,154 @@ export default class Carousel {
   }
 
   render() {
-    this.timeline.start();
-    const root = <div class={this.className}></div>;
+    let timeline = new Timeline();
+    timeline.start();
 
-    this.children.forEach((child, currentPosition) => {
-      let prePosition = (currentPosition - 1 + this.children.length) % this.children.length;
-      let nextPosition = (currentPosition + 1) % this.children.length;
+    let position = 0;
+    let nextPicStopHandler = null;
+    let len = this.data.length;
+    let children = this.data.map((url, currentPosition) => {
+      let lastPosition = (currentPosition - 1 + len) % len;
+      let nextPosition = (currentPosition + 1) % len;
 
-      let distanceMoved = 0;
+      let offset = 0;
       let onStart = () => {
-        if (this.effect === 'fade') return;
+        timeline.pause();
+        clearTimeout(nextPicStopHandler);
 
-        // console.log("onStart");
-        clearTimeout(this.nextPicStopHandler);
-        clearTimeout(this.changePositionHandler);
-        this.timeline.pause();
-
-        let currentElement = this.children[currentPosition];
+        let currentElement = children[currentPosition];
         let currentTransformValue = Number(
           currentElement.style.transform.match(/translateX\(([\s\S]+)px\)/)[1]
         );
-        distanceMoved = currentTransformValue + this.width * currentPosition;
-        // console.log("distanceMoved: " + distanceMoved);
-      };
-
-      let onTap = () => {
-        console.log('Tap currentPosition: ' + currentPosition);
-
-        if (this.effect === 'fade') return;
-        if (this.autoplay) {
-          this.timeline.resume();
-          this.nextPicStopHandler = setTimeout(() => this.next(), this.autoPlaySpeed);
-        }
-      };
-
-      let onPress = () => {
-        console.log('Press currentPosition: ' + currentPosition);
-
-        if (this.effect === 'fade') return;
-        if (this.autoplay) {
-          this.timeline.resume();
-          this.nextPicStopHandler = setTimeout(() => this.next(), this.autoPlaySpeed);
-        }
+        offset = currentTransformValue + 500 * currentPosition;
       };
 
       let onPan = (event) => {
-        if (this.effect === 'fade') return;
+        let { detail } = event;
+        let { startX, startY, clientX, clientY } = detail || {};
+        let lastElement = children[lastPosition];
+        let currentElement = children[currentPosition];
+        let nextElement = children[nextPosition];
 
-        let preElement = this.children[prePosition];
-        let currentElement = this.children[currentPosition];
-        let nextElement = this.children[nextPosition];
+        let dx = clientX - startX;
 
-        let dx = event.detail.clientX - event.detail.startX;
-        let preTransformValue = -this.width - this.width * prePosition + distanceMoved + dx;
-        let currentTransformValue = -this.width * currentPosition + distanceMoved + dx;
-        let nextTransformValue = this.width - this.width * nextPosition + distanceMoved + dx;
+        let lastTransformValue = -500 - 500 * lastPosition + offset + dx;
+        let currentTransformValue = -500 * currentPosition + offset + dx;
+        let nextTransformValue = 500 - 500 * nextPosition + offset + dx;
 
+        lastElement.style.transform = `translateX(${lastTransformValue}px)`;
         currentElement.style.transform = `translateX(${currentTransformValue}px)`;
-        preElement.style.transform = `translateX(${preTransformValue}px)`;
         nextElement.style.transform = `translateX(${nextTransformValue}px)`;
       };
 
       let onPanend = (event) => {
-        if (this.effect === 'fade') return;
+        let { detail } = event;
+        let { startX, startY, clientX, clientY } = detail || {};
 
-        const { startX, startY, clientX, clientY, isFlick } = event.detail;
-        let preElement = this.children[prePosition];
-        let currentElement = this.children[currentPosition];
-        let nextElement = this.children[nextPosition];
-
-        let offset = 0;
+        let direction = 0;
         let dx = clientX - startX;
-        let half = this.width >> 2;
-        if (
-          dx > this.width / 3 ||
-          dx + distanceMoved > half ||
-          (dx + distanceMoved > 0 && isFlick)
-        ) {
-          // 走了一半以上 或者 Flick
-          offset = distanceMoved < -half ? 0 : 1;
-        } else if (
-          dx < -this.width / 3 ||
-          dx + distanceMoved < -half ||
-          (dx + distanceMoved < 0 && isFlick)
-        ) {
-          offset = distanceMoved > half ? 0 : -1;
+
+        if (dx + offset > 250) {
+          direction = 1;
+        } else if (dx + offset < -250) {
+          direction = -1;
         }
 
-        // console.log("dx + distanceMoved: " + (dx + distanceMoved));
-        // console.log("offset: " + offset);
-        this.timeline.reset();
-        this.timeline.start();
+        timeline.reset();
+        timeline.start();
 
-        let preAnimation = new Animation(
-          preElement.style,
+        let lastElement = children[lastPosition];
+        let currentElement = children[currentPosition];
+        let nextElement = children[nextPosition];
+
+        let lastAnimation = new Animation(
+          lastElement.style,
           'transform',
-          -this.width - this.width * prePosition + distanceMoved + dx,
-          offset * this.width - this.width - this.width * prePosition,
+          -500 - 500 * lastPosition + offset + dx,
+          -500 - 500 * lastPosition + direction * 500,
           500,
           0,
-          this.effect,
+          ease,
           (v) => `translateX(${v}px)`
         );
-
         let currentAnimation = new Animation(
           currentElement.style,
           'transform',
-          -this.width * currentPosition + distanceMoved + dx,
-          offset * this.width - this.width * currentPosition,
+          -500 * currentPosition + offset + dx,
+          -500 * currentPosition + direction * 500,
           500,
           0,
-          this.effect,
+          ease,
           (v) => `translateX(${v}px)`
         );
-
         let nextAnimation = new Animation(
           nextElement.style,
           'transform',
-          this.width - this.width * nextPosition + distanceMoved + dx,
-          offset * this.width + this.width - this.width * nextPosition,
+          500 - 500 * nextPosition + offset + dx,
+          500 - 500 * nextPosition + direction * 500,
           500,
           0,
-          this.effect,
+          ease,
           (v) => `translateX(${v}px)`
         );
 
-        this.timeline.add(preAnimation);
-        this.timeline.add(currentAnimation);
-        this.timeline.add(nextAnimation);
+        timeline.add(lastAnimation);
+        timeline.add(currentAnimation);
+        timeline.add(nextAnimation);
 
-        const newPosition =
-          (currentPosition - offset + this.children.length) % this.children.length;
+        position = (position - direction + len) % len;
 
-        this.animationPlaying = true;
-        this.changePositionHandler = setTimeout(() => {
-          this.position = newPosition;
-          this.animationPlaying = false;
-        }, 500);
-
-        if (this.autoplay)
-          this.nextPicStopHandler = setTimeout(() => this.next(), this.autoPlaySpeed);
+        nextPicStopHandler = setTimeout(nextPic, 3000);
       };
+      let element = (
+        <img src={url} onStart={onStart} onPan={onPan} onPanend={onPanend} enableGesture={true} />
+      );
+      element.style.transform = 'translateX(0px)';
+      element.addEventListener('dragstart', (event) => event.preventDefault());
 
-      child.style.transform = 'translateX(0px)';
-
-      child.setAttribute('enableGesture', true);
-      child.addEventListener('start', onStart);
-      child.addEventListener('tap', onTap);
-      child.addEventListener('press', onPress);
-      child.addEventListener('pan', onPan);
-      child.addEventListener('panend', onPanend);
-
-      child.addEventListener('dragstart', (e) => e.preventDefault());
-      child.addEventListener('contextmenu', (e) => e.preventDefault());
-
-      child.mountTo(root.root);
+      return element;
     });
 
-    if (this.autoplay) this.nextPicStopHandler = setTimeout(() => this.next(), this.autoPlaySpeed);
+    let nextPic = () => {
+      let nextPosition = (position + 1) % len;
 
-    return root;
-  }
+      let current = children[position];
+      let next = children[nextPosition];
 
-  pre() {
-    this.gotoPicFunc(this.position - 1 + this.children.length, false);
-  }
-
-  next() {
-    this.gotoPicFunc(this.position + 1);
-  }
-
-  goto(slideNumber) {
-    if (slideNumber < 0 || slideNumber >= this.children.length) {
-      throw Error(`slideNumber must between 0 to ${this.children.length - 1}`);
-    } else if (slideNumber === this.position) {
-      console.log('you are now here, no need to go.');
-    } else {
-      this.gotoPicFunc(slideNumber);
-    }
-  }
-
-  gotoPicFunc(slideNumber, rtl = true) {
-    if (this.animationPlaying) return;
-    let destPosition = slideNumber % this.children.length;
-
-    let current = this.children[this.position];
-    let dest = this.children[destPosition];
-
-    let currentAnimation, destAnimation;
-    if (this.effect === 'fade') {
-      this.timeline.add(new Animation(current.style, 'opacity', 1, 0, 800, 0, linear));
-
-      this.timeline.add(new Animation(dest.style, 'opacity', 0, 1, 800, 0, linear));
-
-      // -this.width * this.position,
-      // this.width - this.width * this.position,
-      currentAnimation = new Animation(
+      let currentAnimation = new Animation(
         current.style,
         'transform',
-        -this.width * this.position,
-        (rtl ? -1 : 1) * this.width - this.width * this.position,
-        0,
-        800,
-        linear,
-        (v) => `translateX(${v}px)`
-      );
-
-      // -this.width - this.width * prePosition,
-      // -this.width * prePosition,
-      destAnimation = new Animation(
-        dest.style,
-        'transform',
-        (rtl ? 1 : -1) * this.width - this.width * destPosition,
-        -this.width * destPosition,
-        0,
-        0,
-        linear,
-        (v) => `translateX(${v}px)`
-      );
-    } else {
-      // -this.width * this.position,
-      // this.width - this.width * this.position,
-      currentAnimation = new Animation(
-        current.style,
-        'transform',
-        -this.width * this.position,
-        (rtl ? -1 : 1) * this.width - this.width * this.position,
+        -100 * position,
+        -100 - 100 * position,
         500,
         0,
-        this.effect,
-        (v) => `translateX(${v}px)`
+        ease,
+        (v) => `translateX(${5 * v}px)`
       );
-
-      // -this.width - this.width * prePosition,
-      // -this.width * prePosition,
-      destAnimation = new Animation(
-        dest.style,
+      let nextAnimation = new Animation(
+        next.style,
         'transform',
-        (rtl ? 1 : -1) * this.width - this.width * destPosition,
-        -this.width * destPosition,
+        100 - 100 * nextPosition,
+        -100 * nextPosition,
         500,
         0,
-        this.effect,
-        (v) => `translateX(${v}px)`
+        ease,
+        (v) => `translateX(${5 * v}px)`
       );
-    }
 
-    this.timeline.add(currentAnimation);
-    this.timeline.add(destAnimation);
+      timeline.add(currentAnimation);
+      timeline.add(nextAnimation);
 
-    this.animationPlaying = true;
-    this.changePositionHandler = setTimeout(() => {
+      position = nextPosition;
+      nextPicStopHandler = setTimeout(nextPic, 3000);
+    };
 
-      this.position = destPosition;
-      this.animationPlaying = false;
-    }, 500);
+    nextPicStopHandler = setTimeout(nextPic, 3000);
 
-    if (this.autoplay) {
-      clearTimeout(this.nextPicStopHandler);
-      this.nextPicStopHandler = setTimeout(() => this.next(), this.autoPlaySpeed);
-    }
+    return <div class="carousel">{children}</div>;
   }
 
   mountTo(parent) {
-    const root = this.render();
-    root.mountTo(parent);
-
-    const rootStyle = getComputedStyle(root.root);
-    // console.log("rootStyle:" + rootStyle.width.slice(0, -2));
-    this.width = Number(rootStyle.width.slice(0, -2));
+    this.render().mountTo(parent);
   }
 }
