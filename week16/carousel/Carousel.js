@@ -65,9 +65,9 @@ export class Carousel {
         let direction = 0;
         let dx = clientX - startX;
 
-        if (dx + offset > 250) {
+        if (dx + offset > 250 || (dx > 0 && event.isFlick)) {
           direction = 1;
-        } else if (dx + offset < -250) {
+        } else if (dx + offset < -250 || (dx < 0 && event.isFlick)) {
           direction = -1;
         }
 
@@ -118,7 +118,7 @@ export class Carousel {
         nextPicStopHandler = setTimeout(nextPic, 3000);
       };
       let element = (
-        <img src={url} onStart={onStart} onPan={onPan} onPanend={onPanend} enableGesture={true} />
+        <img src={url} onStart={onStart} onPan={onPan} onPanend={onPanend} Gesture={true} />
       );
       element.style.transform = 'translateX(0px)';
       element.addEventListener('dragstart', (event) => event.preventDefault());

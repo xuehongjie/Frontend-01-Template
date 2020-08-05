@@ -7,6 +7,7 @@ export default class TabPanel {
     this.children = [];
     this.attributes = new Map();
     this.properties = new Map();
+    this.state = Object.create(null);
   }
 
   setAttribute(name, value) {
@@ -28,9 +29,9 @@ export default class TabPanel {
     this.childViews[i].style.display = ''; // 采用默认css
 
     for (let view of this.titleViews) {
-      view.style.display = 'none';
+      view.classList.remove('selected');
     }
-    this.titleViews[i].style.display = ''; // 采用默认css
+    this.titleViews[i].classList.add('selected');
     // this.titleView.innerText = this.children[i].title;
   }
 
@@ -39,8 +40,11 @@ export default class TabPanel {
       <div style="width: 300px;min-height: 300px;">{child}</div>
     ));
     this.titleViews = this.children.map((child, i) => (
-      <span onClick={() => this.select(i)} style="background-color: lightgreen;margin:5px 5px 0;font-size:24px;width: 300px;min-height: 300px;">
-        {child}
+      <span
+        class="tab-panel-title"
+        onClick={() => this.select(i)}
+      >
+        {child.getAttribute('title') || ''}
       </span>
     ));
     setTimeout(() => {
@@ -48,8 +52,8 @@ export default class TabPanel {
     }, 16);
 
     return (
-      <div class="tab-panel" style="width: 300px">
-        <h1 style="width: 300px;">{this.childViews}</h1>
+      <div class="tab-panel">
+        <h1 class="tab-panel-header">{this.titleViews}</h1>
         <div>{this.childViews}</div>
       </div>
     );

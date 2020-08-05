@@ -1,4 +1,4 @@
-import { enableGesture } from './gesture'
+import { Gesture } from './../gesture'
 
 export function createElement(Cls, attributes, ...children) {
   let o;
@@ -54,8 +54,8 @@ export class Wrapper {
       const eventName = RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase())
       this.addEventListener(eventName, val)
     }
-    if (name === 'enableGesture') {
-      enableGesture(this.root)
+    if (name === 'Gesture') {
+      new Gesture(this.root)
     }
   }
 
