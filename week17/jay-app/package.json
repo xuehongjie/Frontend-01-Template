@@ -1,0 +1,21 @@
+{
+  "name": "jay-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "yo:jay": "yo jay",
+    "yo:appname": "yo jay yeoman-test",
+    "yo:coffee": "yo jay yeoman-test --coffee"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^3.15.0",
+    "lodash": "^4.17.19",
+    "yo": "^3.1.1"
+  },
+  "dependencies": {
+    "react": "^16.2.0"
+  }
+}

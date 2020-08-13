@@ -5,9 +5,9 @@ const { resolve } = require('path');
 let stdin = ttys.stdin;
 let stdout = ttys.stdout;
 
-stdin.setRawMode(true)
-stdin.resume()
-stdin.setEncode('utf-8')
+stdin.setRawMode(true);
+stdin.resume();
+stdin.setEncoding('utf-8');
 
 function getChar() {
   return new Promise((resolve) => {
@@ -18,32 +18,32 @@ function getChar() {
 }
 
 function up(n = 1) {
-  stdout.write(`\033[${n}A`);
+  stdout.write('\033[' + n + 'A');
 }
 
 function down(n = 1) {
-  stdout.write(`\033[${n}B`);
+  stdout.write('\033[' + n + 'B');
 }
 function right(n = 1) {
-  stdout.write(`\033[${n}C`);
+  stdout.write('\033[' + n + 'C');
 }
 function left(n = 1) {
-  stdout.write(`\033[${n}D`);
+  stdout.write('\033[' + n + 'D');
 }
 
-void async function () {
-  stdout.write('which framework do you want to use ?');
-  let answer = await Selection(['vue', 'react', 'angular']);
-  stdout.write(`You selected ${answer} !\n`);
+void (async function () {
+  stdout.write('which framework do you want to use ?\n');
+  let answer = await select(['vue', 'react', 'angular']);
+  stdout.write('You selected ' + answer + '!\n');
   process.exit();
-};
+})();
 
 async function select(choices) {
   let selected = 0;
   for (let i = 0; i < choices.length; i++) {
     const choice = choices[i];
     let symbol = i === selected ? '*' : ' ';
-    stdout.write(`[${symbol}] ${choice}\n`);
+    stdout.write('[' + symbol + '] ' + choice + '\n');
   }
 
   up(choices.length);
@@ -60,7 +60,7 @@ async function select(choices) {
       left();
       selected--;
       up();
-      stdout.write('x\x1b[32mx\x1b[0m');
+      stdout.write('*');
       left();
     }
     if (char === 's' && selected < choices.length - 1) {
@@ -68,7 +68,7 @@ async function select(choices) {
       left();
       selected++;
       down();
-      stdout.write('x\x1b[32mx\x1b[0m');
+      stdout.write('*');
       left();
     }
     if (char === '\r') {
