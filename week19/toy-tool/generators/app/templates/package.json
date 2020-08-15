@@ -1,0 +1,16 @@
+{
+  "name": "<%= title %>",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --require @babel/register",
+    "coverage": "nyc mocha",
+    "start": "webpack-dev-server",
+    "build": "webpack",
+    "ge": "yo toytool"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

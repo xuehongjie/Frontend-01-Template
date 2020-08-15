@@ -1,5 +1,6 @@
-let parser = require('./../src/parser.js');
-var assert = require('assert');
+// let parser = require('./../src/parser.js');
+import parser from './../src/parser.js';
+import assert from 'assert';
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 
 let { parseHTML } = parser;
@@ -7,7 +8,6 @@ let { parseHTML } = parser;
 describe('parser', function () {
   it('parse a single element', function () {
     let doc = parseHTML('<div></div>');
-    // console.log(doc)
     let div = doc.children[0];
 
     assert.equal(div.tagName, 'div');
@@ -139,7 +139,6 @@ describe('parser', function () {
   it('self closed', function () {
     let doc = parseHTML('<div/>');
     let div = doc.children[0];
-    console.log(div);
 
     assert.equal(div.tagName, 'div');
   });
